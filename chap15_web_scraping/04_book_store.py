@@ -15,12 +15,26 @@ def setup():
         print(e)
 
 
-def book_2stars():
-    soup = bs4.BeautifulSoup(requests.get('http://books.toscrape.com/').text, 'lxml')
+def book_2stars(page_content):
+    soup = bs4.BeautifulSoup(page_content, 'lxml')
     books = soup.select('.star-rating.Two')
     for book in books:
         title = book.parent.select('h3')[0].select('a')[0].get('title')
         print(title)
 
+
+def loop_bookstore():
+    page = 1
+    res = requests.get(
+        f'https://books.toscrape.com/catalogue/page-{page}.html')
+    while (res.status_code == 200):
+        print(f'\n=== Page {page} ===')
+        book_2stars(res.text)
+        page += 1
+        res = requests.get(
+            f'https://books.toscrape.com/catalogue/page-{page}.html')
+
+
 setup()
-book_2stars()
+# book_2stars()
+loop_bookstore()
